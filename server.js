@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
-const http = require('http')
+const request = require('request');
 
 app.listen(process.env.PORT || 3000, () => {
   console.log('Listening on port 3000');
@@ -19,26 +19,14 @@ app.get('/', (req, res) => {
 
 // List all posts
 app.get('/posts', (req, res) => {
-  var data ='';
-
-  http.get('http://jsonplaceholder.typicode.com/posts', (resp) => {
-  console.log(resp)  
-  // A chunk of data has been recieved.
-    resp.on('data', (chunk) => {
-      data += chunk;
-    });
-
-    // The whole response has been received. Print out the result.
-    resp.on('end', () => {
-      console.log(JSON.parse(data).explanation);
-    });
-
-  }).on("error", (err) => {
-    console.log("Error: " + err.message);
-  })
-
-  console.log(data);
-   res.render('posts.ejs', {posts: data})
+  var request = require('request');
+  request('http://jsonplaceholder.typicode.com/posts', function (error, response, body) {
+    console.log('error:', error);
+    console.log('statusCode:', response && response.statusCode);
+    console.log('body:', body);
+    var json = JSON.parse(body)
+    res.render('posts.ejs', { posts: json })
+  });
 });
 
 // Show the search form
