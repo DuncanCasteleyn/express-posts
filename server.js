@@ -19,7 +19,6 @@ app.get('/', (req, res) => {
 
 // List all posts
 app.get('/posts', (req, res) => {
-  var request = require('request');
   request('http://jsonplaceholder.typicode.com/posts', function (error, response, body) {
     console.log('error:', error);
     console.log('statusCode:', response && response.statusCode);
@@ -35,4 +34,21 @@ app.get('/search', (req, res) => {
 });
 
 // Find all comments for post
-app.post('/search', (req, res) => { });
+app.post('/search', (req, res) => {
+  console.log(req.body);
+  request('http://jsonplaceholder.typicode.com/post/3/comments', function (error, response, body) {
+    console.log('error:', error);
+    console.log('statusCode:', response && response.statusCode);
+    console.log('body:', body);
+    var json = JSON.parse(body)
+    var mComments = []
+    for (var i = 0; i < json.length; i++) {
+      console.log(json[i]);
+      console.log('filter: ' + req.body.title)
+      if (json[i].name === req.body.title) {
+        mComments.push(json[i]);
+      }
+    }
+    res.render('search_result.ejs', { comments: mComments })
+  });
+});
